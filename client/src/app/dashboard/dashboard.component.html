@@ -1,0 +1,23 @@
+<h3 class="m-bot-30">Teams</h3>
+<section>
+<div class="row"> 
+  <!-- ngfor -->
+  <div *ngFor="let team of teams" class="col-md-3 col-sm-4 m-bot-30" style="cursor: pointer">
+      <div class="card" (click)="getTeamMembers(team.id)">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-8">
+                  <div class="profImg"><img class="card-img-top" src="../../assets/img/logo.jpg" alt="Card image cap"></div>
+              </div>
+              <div class="col-sm-8">
+                  <h5 class="card-title">{{team.name}}</h5>
+                  <p class="clubstate">{{team.club_state}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+   <!-- ngfor close -->
+</div>
+</section>
+<app-player *ngIf="loaded" [teamId]="teamId"></app-player>

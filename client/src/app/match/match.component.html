@@ -1,0 +1,150 @@
+<h3 class="m-bot-30">Matches</h3>
+<div class="text-right m-bot-30">
+<!-- <button type="button" class="btn btn-primary">Add Match</button> -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Fix Match
+</button>
+</div>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Match Name</th>
+        <th scope="col">Team A</th>
+        <th scope="col">Team B</th>
+        <th scope="col">Match Date</th>
+        <th scope="col">Winnign Team</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let match of matches">
+        <th scope="row">{{match.id}}</th>
+        <td>{{match.match_name}}</td>
+        <td>{{teamArray[match.first_team] | titlecase }}</td>
+        <td>{{teamArray[match.second_team] | titlecase }}</td>
+        <td>{{match.match_date | date:'MMM d, y'}}</td>
+        <td>{{teamArray[match.winning_team] | titlecase}}</td>
+        <td><button *ngIf="!match.winning_team" type="button" (click)="getWinModel(match)" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalWin">
+          Edit Match
+        </button></td>
+      </tr>
+    </tbody>
+</table>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Fix Match</h5>
+        <button type="button" class="close" (click)="cleanForm()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="onSubmit(matchForm)" #matchForm="ngForm">
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="name">Match Name</label>
+            <input type="text" class="form-control" id="match_name"
+               required
+               [(ngModel)]="match.match_name" name="match_name"
+               #match_name="ngModel">
+            <div [hidden]="match_name.valid || match_name.pristine"
+                class="alert alert-danger">
+              Match Name is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="first_team">Team A</label>
+            <select class="form-control" id="first_team"
+                required
+                [(ngModel)]="match.first_team" name="first_team"
+                #first_team="ngModel">
+              <option *ngFor="let team of teams" [value]="team.id">{{team.name}}</option>
+            </select>
+            <div [hidden]="first_team.valid || first_team.pristine" class="alert alert-danger">
+              Team A is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="second_team">Team B</label>
+            <select class="form-control" id="second_team"
+                required
+                [(ngModel)]="match.second_team" name="second_team"
+                #second_team="ngModel">
+              <option *ngFor="let team of teams" [value]="team.id">{{team.name}}</option>
+            </select>
+            <div [hidden]="second_team.valid || second_team.pristine" class="alert alert-danger">
+              Team B is required
+            </div>
+            <div [hidden]="!sameTeams" class="alert alert-danger">
+              Team A and Team B should not be same
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="match_date">Match Date</label>
+            <input type="date" class="form-control" #match_date="ngModel" name="match_date" id="match_date" required [(ngModel)] ="match.match_date" (ngModelChange)="dt = $event">
+            <div [hidden]="match_date.valid || match_date.pristine"
+                class="alert alert-danger">
+              Match Name is required
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" [disabled]="!matchForm.form.valid" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModalWin" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelWin" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabelWin">Update winning Team</h5>
+        <button type="button" class="close" (click)="cleanForm()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="onWinSubmit(matchWinForm)" #matchWinForm="ngForm">
+      <div class="modal-body">
+          <div class="form-group">
+            <label for="name" class="font-weight-bold">Match Name</label>
+            <span class="ml-3">{{match.match_name }}</span>
+          </div>
+          <div class="form-group">
+            <label for="teamA" class="font-weight-bold">Team A</label>
+            <span class="ml-3">{{teamArray[match.first_team] | titlecase }}</span>
+          </div>
+          <div class="form-group">
+            <label for="teamB" class="font-weight-bold">Team B</label>
+            <span class="ml-3">{{teamArray[match.second_team] | titlecase }}</span>
+          </div>
+          <div class="form-group">
+            <label for="match_date" class="font-weight-bold">Match Date</label>
+            <span class="ml-3">{{match.match_date | date:'MMM d, y'}}</span>
+          </div>
+          <div class="form-group">
+            <label for="winning_team" class="font-weight-bold">Winning Team</label>
+            <select class="form-control" id="winning_team"
+                required
+                [(ngModel)]="match.winning_team" name="winning_team"
+                #winning_team="ngModel">
+                <ng-container *ngFor="let team of teams">
+                  <option [value]="team.id" *ngIf="team.id==match.first_team||team.id==match.second_team">{{team.name}}</option>
+                </ng-container>
+            </select>
+            <div [hidden]="winning_team.valid || winning_team.pristine" class="alert alert-danger">
+              Winning team is required
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" [disabled]="!matchWinForm.form.valid" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>

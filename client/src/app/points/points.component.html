@@ -1,0 +1,17 @@
+<h3 class="m-bot-30">Points</h3>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Team</th>
+        <th scope="col">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let point of points">
+        <th scope="row">{{point.id}}</th>
+        <td>{{teamArray[point.team_id] | titlecase}}</td>
+        <td>{{point.points}}</td>
+      </tr>
+    </tbody>
+  </table>
